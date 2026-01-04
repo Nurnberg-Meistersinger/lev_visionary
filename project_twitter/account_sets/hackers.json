@@ -1,0 +1,38 @@
+{
+  "name": "Hackers",
+  "description": "Auto-generated grouping",
+  "accounts": [
+    {
+      "handle": "Zephyr_hg",
+      "name": "Zephyr"
+    },
+    {
+      "handle": "csallen",
+      "name": "Chris Allen"
+    },
+    {
+      "handle": "marclou",
+      "name": "Marc Lou"
+    },
+    {
+      "handle": "yasser_elsaid_",
+      "name": "Yasser Elsaid"
+    },
+    {
+      "handle": "gregisenberg",
+      "name": "Greg Isenberg"
+    },
+    {
+      "handle": "vincentmvdm",
+      "name": "Vincent van der Meer"
+    },
+    {
+      "handle": "johnrushx",
+      "name": "John Rush"
+    },
+    {
+      "handle": "levelsio",
+      "name": "Pieter Levels"
+    }
+  ]
+}

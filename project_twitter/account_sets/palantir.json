@@ -1,0 +1,54 @@
+{
+  "name": "Palantir",
+  "description": "Auto-generated grouping",
+  "accounts": [
+    {
+      "handle": "PalantirTech",
+      "name": "Palantir Technologies"
+    },
+    {
+      "handle": "PalantirPrivacy",
+      "name": "Palantir Privacy"
+    },
+    {
+      "handle": "AlexKarp_1",
+      "name": "Alex Karp, Palantir, CEO"
+    },
+    {
+      "handle": "ssankar",
+      "name": "Shankar Sankar, Palantir, CTO"
+    },
+    {
+      "handle": "JTLonsdale",
+      "name": "Joe Lonsdale, Palantir, Co-Founder"
+    },
+    {
+      "handle": "hyperindexed",
+      "name": "Akshay Krishnaswamy, Palantir, Chief Architect"
+    },
+    {
+      "handle": "chadwahl",
+      "name": "Chad Wahl, Palantir, Forward Deployed Architect"
+    },
+    {
+      "handle": "louismosley",
+      "name": "Louis Mosley, Palantir, VP Global Communications"
+    },
+    {
+      "handle": "jordanchirsch",
+      "name": "Jordan Chirsch, Palantir, Senior Counselor"
+    },
+    {
+      "handle": "ChairmanG",
+      "name": "Mike Gallagher, Palantir, Head of Defense"
+    },
+    {
+      "handle": "DailyPalantir",
+      "name": "Daily Palantir"
+    },
+    {
+      "handle": "micsolana",
+      "name": "Michael Solana"
+    }
+  ]
+}

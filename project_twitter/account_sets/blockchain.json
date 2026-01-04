@@ -1,0 +1,66 @@
+{
+  "name": "Blockchain",
+  "description": "Auto-generated grouping",
+  "accounts": [
+    {
+      "handle": "Arvolear",
+      "name": "Artem Chystiakov"
+    },
+    {
+      "handle": "NexusMutual",
+      "name": "Nexus Mutual"
+    },
+    {
+      "handle": "BainCapCrypto",
+      "name": "Bain Capital Crypto"
+    },
+    {
+      "handle": "Nethermind",
+      "name": "Nethermind"
+    },
+    {
+      "handle": "francescoswiss",
+      "name": "Francesco Andreoli"
+    },
+    {
+      "handle": "artofkot",
+      "name": "Artem Kotelskiy"
+    },
+    {
+      "handle": "cyntro_py",
+      "name": "Stepan Gershuni"
+    },
+    {
+      "handle": "seunlanlege",
+      "name": "Web3 Philosopher"
+    },
+    {
+      "handle": "CryptoHayes",
+      "name": "Artur Hayes"
+    },
+    {
+      "handle": "EFDevconnect",
+      "name": "EF Devconnect"
+    },
+    {
+      "handle": "infosecual",
+      "name": "Infosecual, EF, Protocol Security Researcher"
+    },
+    {
+      "handle": "0xPolygonFdn",
+      "name": "Polygon Foundation"
+    },
+    {
+      "handle": "jbaylina",
+      "name": "Jordi Baylina"
+    },
+    {
+      "handle": "FrankResearcher",
+      "name": "Igor Igamberdiev, Researcher from Wintermute"
+    },
+    {
+      "handle": "SergePrilutskiy",
+      "name": "Sergey Prilutskiy"
+    }
+  ]
+}

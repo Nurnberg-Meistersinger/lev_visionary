@@ -1,0 +1,74 @@
+{
+  "name": "Venture",
+  "description": "Auto-generated grouping",
+  "accounts": [
+    {
+      "handle": "DavidGeorge83",
+      "name": "Head of Growth Fund @a16z"
+    },
+    {
+      "handle": "a16z",
+      "name": "Andreessen Horowitz"
+    },
+    {
+      "handle": "FoundersFund",
+      "name": "Founders Fund"
+    },
+    {
+      "handle": "DavidSacks",
+      "name": "David Sacks"
+    },
+    {
+      "handle": "hthieblot",
+      "name": "Hubert Thieblot, Investor"
+    },
+    {
+      "handle": "SuccinctJT",
+      "name": "Justin Thaler, a16z"
+    },
+    {
+      "handle": "valeryz",
+      "name": "Valeriy Zamaraiev, 1kx"
+    },
+    {
+      "handle": "pet3rpan_",
+      "name": "Pet3r Pan, 1kx"
+    },
+    {
+      "handle": "1kxnetwork",
+      "name": "1kx Network"
+    },
+    {
+      "handle": "lalleclausen",
+      "name": "Lalle Clausen, 1kx"
+    },
+    {
+      "handle": "_weidai",
+      "name": "Wei Dai, 1kx"
+    },
+    {
+      "handle": "akindo_io",
+      "name": "Akindo"
+    },
+    {
+      "handle": "FurqanR",
+      "name": "Furqan Rydhan, Founders Inc"
+    },
+    {
+      "handle": "fdotinc",
+      "name": "Fdot Inc"
+    },
+    {
+      "handle": "bhorowitz",
+      "name": "Ben Horowitz"
+    },
+    {
+      "handle": "gakonst",
+      "name": "Georgios Konstantopoulos"
+    },
+    {
+      "handle": "pmarca",
+      "name": "Marc Andreessen"
+    }
+  ]
+}

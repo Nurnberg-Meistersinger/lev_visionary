@@ -1,0 +1,30 @@
+{
+  "name": "Protectorium",
+  "description": "Auto-generated grouping",
+  "accounts": [
+    {
+      "handle": "InsiderILS",
+      "name": "Insurance Insider ILS"
+    },
+    {
+      "handle": "LedgerInvesting",
+      "name": "Ledger Investing"
+    },
+    {
+      "handle": "germanmikulski",
+      "name": "German Mikulski, ClaimSorted, CTO"
+    },
+    {
+      "handle": "grtspvl",
+      "name": "Pavel Gertsberg, ClaimSorted, CEO"
+    },
+    {
+      "handle": "Lemonade_Inc",
+      "name": "Lemonade Insurance"
+    },
+    {
+      "handle": "gwintrob",
+      "name": "Gordon Wintrob, Newfront"
+    }
+  ]
+}

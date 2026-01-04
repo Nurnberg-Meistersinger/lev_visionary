@@ -1,0 +1,62 @@
+{
+  "name": "Ycombinator",
+  "description": "Auto-generated grouping",
+  "accounts": [
+    {
+      "handle": "ycombinator",
+      "name": "YCombinator"
+    },
+    {
+      "handle": "garrytan",
+      "name": "Garry Tan"
+    },
+    {
+      "handle": "paulg",
+      "name": "Paul Graham"
+    },
+    {
+      "handle": "jasonfreedman",
+      "name": "Jason Freedman"
+    },
+    {
+      "handle": "t_blom",
+      "name": "Tom Blomfield"
+    },
+    {
+      "handle": "jesslivingston",
+      "name": "Jess Livingston"
+    },
+    {
+      "handle": "juddantin",
+      "name": "Judd Antin"
+    },
+    {
+      "handle": "lennysan",
+      "name": "Lenny San"
+    },
+    {
+      "handle": "rrhoover",
+      "name": "Ryan Hoover"
+    },
+    {
+      "handle": "daltonc",
+      "name": "Dalton Caldwell"
+    },
+    {
+      "handle": "bchesky",
+      "name": "Brian Chesky"
+    },
+    {
+      "handle": "mwseibel",
+      "name": "Michael Seibel"
+    },
+    {
+      "handle": "patrickc",
+      "name": "Patrick Collison"
+    },
+    {
+      "handle": "garyblack00",
+      "name": "Gary Black"
+    }
+  ]
+}

@@ -1,0 +1,454 @@
+{
+  "name": "All sources",
+  "description": "Every account",
+  "accounts": [
+    {
+      "handle": "lexfridman",
+      "name": "Lex Fridman"
+    },
+    {
+      "handle": "JeffBezos",
+      "name": "Jeff Bezos"
+    },
+    {
+      "handle": "michaeljburry",
+      "name": "Michael Burry"
+    },
+    {
+      "handle": "sgblank",
+      "name": "Steve Blank"
+    },
+    {
+      "handle": "UriLevine1",
+      "name": "Uri Levine"
+    },
+    {
+      "handle": "InsiderILS",
+      "name": "Insurance Insider ILS"
+    },
+    {
+      "handle": "LedgerInvesting",
+      "name": "Ledger Investing"
+    },
+    {
+      "handle": "germanmikulski",
+      "name": "German Mikulski, ClaimSorted, CTO"
+    },
+    {
+      "handle": "grtspvl",
+      "name": "Pavel Gertsberg, ClaimSorted, CEO"
+    },
+    {
+      "handle": "Lemonade_Inc",
+      "name": "Lemonade Insurance"
+    },
+    {
+      "handle": "gwintrob",
+      "name": "Gordon Wintrob, Newfront"
+    },
+    {
+      "handle": "Cobratate",
+      "name": "Andrew Tate"
+    },
+    {
+      "handle": "JMilei",
+      "name": "Javier Milei"
+    },
+    {
+      "handle": "naval",
+      "name": "Naval Ravikant"
+    },
+    {
+      "handle": "Zephyr_hg",
+      "name": "Zephyr"
+    },
+    {
+      "handle": "csallen",
+      "name": "Chris Allen"
+    },
+    {
+      "handle": "marclou",
+      "name": "Marc Lou"
+    },
+    {
+      "handle": "yasser_elsaid_",
+      "name": "Yasser Elsaid"
+    },
+    {
+      "handle": "gregisenberg",
+      "name": "Greg Isenberg"
+    },
+    {
+      "handle": "vincentmvdm",
+      "name": "Vincent van der Meer"
+    },
+    {
+      "handle": "johnrushx",
+      "name": "John Rush"
+    },
+    {
+      "handle": "levelsio",
+      "name": "Pieter Levels"
+    },
+    {
+      "handle": "DavidGeorge83",
+      "name": "Head of Growth Fund @a16z"
+    },
+    {
+      "handle": "a16z",
+      "name": "Andreessen Horowitz"
+    },
+    {
+      "handle": "FoundersFund",
+      "name": "Founders Fund"
+    },
+    {
+      "handle": "DavidSacks",
+      "name": "David Sacks"
+    },
+    {
+      "handle": "hthieblot",
+      "name": "Hubert Thieblot, Investor"
+    },
+    {
+      "handle": "SuccinctJT",
+      "name": "Justin Thaler, a16z"
+    },
+    {
+      "handle": "valeryz",
+      "name": "Valeriy Zamaraiev, 1kx"
+    },
+    {
+      "handle": "pet3rpan_",
+      "name": "Pet3r Pan, 1kx"
+    },
+    {
+      "handle": "1kxnetwork",
+      "name": "1kx Network"
+    },
+    {
+      "handle": "lalleclausen",
+      "name": "Lalle Clausen, 1kx"
+    },
+    {
+      "handle": "_weidai",
+      "name": "Wei Dai, 1kx"
+    },
+    {
+      "handle": "akindo_io",
+      "name": "Akindo"
+    },
+    {
+      "handle": "FurqanR",
+      "name": "Furqan Rydhan, Founders Inc"
+    },
+    {
+      "handle": "fdotinc",
+      "name": "Fdot Inc"
+    },
+    {
+      "handle": "bhorowitz",
+      "name": "Ben Horowitz"
+    },
+    {
+      "handle": "gakonst",
+      "name": "Georgios Konstantopoulos"
+    },
+    {
+      "handle": "pmarca",
+      "name": "Marc Andreessen"
+    },
+    {
+      "handle": "ycombinator",
+      "name": "YCombinator"
+    },
+    {
+      "handle": "garrytan",
+      "name": "Garry Tan"
+    },
+    {
+      "handle": "paulg",
+      "name": "Paul Graham"
+    },
+    {
+      "handle": "jasonfreedman",
+      "name": "Jason Freedman"
+    },
+    {
+      "handle": "t_blom",
+      "name": "Tom Blomfield"
+    },
+    {
+      "handle": "jesslivingston",
+      "name": "Jess Livingston"
+    },
+    {
+      "handle": "juddantin",
+      "name": "Judd Antin"
+    },
+    {
+      "handle": "lennysan",
+      "name": "Lenny San"
+    },
+    {
+      "handle": "rrhoover",
+      "name": "Ryan Hoover"
+    },
+    {
+      "handle": "daltonc",
+      "name": "Dalton Caldwell"
+    },
+    {
+      "handle": "bchesky",
+      "name": "Brian Chesky"
+    },
+    {
+      "handle": "mwseibel",
+      "name": "Michael Seibel"
+    },
+    {
+      "handle": "patrickc",
+      "name": "Patrick Collison"
+    },
+    {
+      "handle": "garyblack00",
+      "name": "Gary Black"
+    },
+    {
+      "handle": "PalantirTech",
+      "name": "Palantir Technologies"
+    },
+    {
+      "handle": "PalantirPrivacy",
+      "name": "Palantir Privacy"
+    },
+    {
+      "handle": "AlexKarp_1",
+      "name": "Alex Karp, Palantir, CEO"
+    },
+    {
+      "handle": "ssankar",
+      "name": "Shankar Sankar, Palantir, CTO"
+    },
+    {
+      "handle": "JTLonsdale",
+      "name": "Joe Lonsdale, Palantir, Co-Founder"
+    },
+    {
+      "handle": "hyperindexed",
+      "name": "Akshay Krishnaswamy, Palantir, Chief Architect"
+    },
+    {
+      "handle": "chadwahl",
+      "name": "Chad Wahl, Palantir, Forward Deployed Architect"
+    },
+    {
+      "handle": "louismosley",
+      "name": "Louis Mosley, Palantir, VP Global Communications"
+    },
+    {
+      "handle": "jordanchirsch",
+      "name": "Jordan Chirsch, Palantir, Senior Counselor"
+    },
+    {
+      "handle": "ChairmanG",
+      "name": "Mike Gallagher, Palantir, Head of Defense"
+    },
+    {
+      "handle": "DailyPalantir",
+      "name": "Daily Palantir"
+    },
+    {
+      "handle": "micsolana",
+      "name": "Michael Solana"
+    },
+    {
+      "handle": "Arvolear",
+      "name": "Artem Chystiakov"
+    },
+    {
+      "handle": "NexusMutual",
+      "name": "Nexus Mutual"
+    },
+    {
+      "handle": "BainCapCrypto",
+      "name": "Bain Capital Crypto"
+    },
+    {
+      "handle": "Nethermind",
+      "name": "Nethermind"
+    },
+    {
+      "handle": "francescoswiss",
+      "name": "Francesco Andreoli"
+    },
+    {
+      "handle": "artofkot",
+      "name": "Artem Kotelskiy"
+    },
+    {
+      "handle": "cyntro_py",
+      "name": "Stepan Gershuni"
+    },
+    {
+      "handle": "seunlanlege",
+      "name": "Web3 Philosopher"
+    },
+    {
+      "handle": "CryptoHayes",
+      "name": "Artur Hayes"
+    },
+    {
+      "handle": "EFDevconnect",
+      "name": "EF Devconnect"
+    },
+    {
+      "handle": "infosecual",
+      "name": "Infosecual, EF, Protocol Security Researcher"
+    },
+    {
+      "handle": "0xPolygonFdn",
+      "name": "Polygon Foundation"
+    },
+    {
+      "handle": "jbaylina",
+      "name": "Jordi Baylina"
+    },
+    {
+      "handle": "FrankResearcher",
+      "name": "Igor Igamberdiev, Researcher from Wintermute"
+    },
+    {
+      "handle": "SergePrilutskiy",
+      "name": "Sergey Prilutskiy"
+    },
+    {
+      "handle": "VitalikButerin",
+      "name": "Vitalik Buterin"
+    },
+    {
+      "handle": "GuyZys",
+      "name": "Guy Zyskind, CEO Fhenix"
+    },
+    {
+      "handle": "fhenix",
+      "name": "Fhenix"
+    },
+    {
+      "handle": "icyphersnake",
+      "name": "Cyphersnake"
+    },
+    {
+      "handle": "DarkFiSquad",
+      "name": "DarkFi Squad"
+    },
+    {
+      "handle": "axiom_xyz",
+      "name": "Axiom XYZ"
+    },
+    {
+      "handle": "ZeroPoolNetwork",
+      "name": "Zero Pool Network"
+    },
+    {
+      "handle": "zkGaylord",
+      "name": "Gaylord, Miden"
+    },
+    {
+      "handle": "alexanderlee314",
+      "name": "Alex John Lee"
+    },
+    {
+      "handle": "PrivacyEthereum",
+      "name": "Privacy Ethereum"
+    },
+    {
+      "handle": "barinov",
+      "name": "Igor Barinov, EF"
+    },
+    {
+      "handle": "cypherpunktech",
+      "name": "Cypherpunk Tech"
+    },
+    {
+      "handle": "adam3us",
+      "name": "Adam Back"
+    },
+    {
+      "handle": "0xMiden",
+      "name": "Miden"
+    },
+    {
+      "handle": "curryrasul",
+      "name": "Rasul Ibragimov"
+    },
+    {
+      "handle": "Scroll_ZKP",
+      "name": "Scroll"
+    },
+    {
+      "handle": "NoirLang",
+      "name": "Noir Lang"
+    },
+    {
+      "handle": "Ingo_zk",
+      "name": "Ingo ZK"
+    },
+    {
+      "handle": "__zkhack__",
+      "name": "ZKhack"
+    },
+    {
+      "handle": "RiscZero",
+      "name": "RiscZero"
+    },
+    {
+      "handle": "dlubarov",
+      "name": "Daniel Lubarov, ZK Engineer"
+    },
+    {
+      "handle": "azkr_org",
+      "name": "AZKR Research Association"
+    },
+    {
+      "handle": "zksecurityXYZ",
+      "name": "ZK Security"
+    },
+    {
+      "handle": "rel_zeta_tech",
+      "name": "Ariel Gabizon"
+    },
+    {
+      "handle": "zeroknowledgefm",
+      "name": "Zero Knowledge Podcast"
+    },
+    {
+      "handle": "Zac_Aztec",
+      "name": "Zac Williamson, Aztec"
+    },
+    {
+      "handle": "aztecnetwork",
+      "name": "Aztec Network"
+    },
+    {
+      "handle": "semenov_roman_",
+      "name": "Roman Semenov"
+    },
+    {
+      "handle": "maximvezenov",
+      "name": "Maxim Vezenov, Noir"
+    },
+    {
+      "handle": "EliBenSasson",
+      "name": "Eli Ben-Sasson"
+    },
+    {
+      "handle": "RAILGUN_Project",
+      "name": "Railgun"
+    },
+    {
+      "handle": "rstormsf",
+      "name": "Roman Storm"
+    }
+  ]
+}

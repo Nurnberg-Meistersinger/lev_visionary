@@ -1,0 +1,134 @@
+{
+  "name": "Cypherpunk",
+  "description": "Auto-generated grouping",
+  "accounts": [
+    {
+      "handle": "VitalikButerin",
+      "name": "Vitalik Buterin"
+    },
+    {
+      "handle": "GuyZys",
+      "name": "Guy Zyskind, CEO Fhenix"
+    },
+    {
+      "handle": "fhenix",
+      "name": "Fhenix"
+    },
+    {
+      "handle": "icyphersnake",
+      "name": "Cyphersnake"
+    },
+    {
+      "handle": "DarkFiSquad",
+      "name": "DarkFi Squad"
+    },
+    {
+      "handle": "axiom_xyz",
+      "name": "Axiom XYZ"
+    },
+    {
+      "handle": "ZeroPoolNetwork",
+      "name": "Zero Pool Network"
+    },
+    {
+      "handle": "zkGaylord",
+      "name": "Gaylord, Miden"
+    },
+    {
+      "handle": "alexanderlee314",
+      "name": "Alex John Lee"
+    },
+    {
+      "handle": "PrivacyEthereum",
+      "name": "Privacy Ethereum"
+    },
+    {
+      "handle": "barinov",
+      "name": "Igor Barinov, EF"
+    },
+    {
+      "handle": "cypherpunktech",
+      "name": "Cypherpunk Tech"
+    },
+    {
+      "handle": "adam3us",
+      "name": "Adam Back"
+    },
+    {
+      "handle": "0xMiden",
+      "name": "Miden"
+    },
+    {
+      "handle": "curryrasul",
+      "name": "Rasul Ibragimov"
+    },
+    {
+      "handle": "Scroll_ZKP",
+      "name": "Scroll"
+    },
+    {
+      "handle": "NoirLang",
+      "name": "Noir Lang"
+    },
+    {
+      "handle": "Ingo_zk",
+      "name": "Ingo ZK"
+    },
+    {
+      "handle": "__zkhack__",
+      "name": "ZKhack"
+    },
+    {
+      "handle": "RiscZero",
+      "name": "RiscZero"
+    },
+    {
+      "handle": "dlubarov",
+      "name": "Daniel Lubarov, ZK Engineer"
+    },
+    {
+      "handle": "azkr_org",
+      "name": "AZKR Research Association"
+    },
+    {
+      "handle": "zksecurityXYZ",
+      "name": "ZK Security"
+    },
+    {
+      "handle": "rel_zeta_tech",
+      "name": "Ariel Gabizon"
+    },
+    {
+      "handle": "zeroknowledgefm",
+      "name": "Zero Knowledge Podcast"
+    },
+    {
+      "handle": "Zac_Aztec",
+      "name": "Zac Williamson, Aztec"
+    },
+    {
+      "handle": "aztecnetwork",
+      "name": "Aztec Network"
+    },
+    {
+      "handle": "semenov_roman_",
+      "name": "Roman Semenov"
+    },
+    {
+      "handle": "maximvezenov",
+      "name": "Maxim Vezenov, Noir"
+    },
+    {
+      "handle": "EliBenSasson",
+      "name": "Eli Ben-Sasson"
+    },
+    {
+      "handle": "RAILGUN_Project",
+      "name": "Railgun"
+    },
+    {
+      "handle": "rstormsf",
+      "name": "Roman Storm"
+    }
+  ]
+}

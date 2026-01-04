@@ -1,0 +1,26 @@
+{
+  "name": "Entrepreneurs",
+  "description": "Auto-generated grouping",
+  "accounts": [
+    {
+      "handle": "lexfridman",
+      "name": "Lex Fridman"
+    },
+    {
+      "handle": "JeffBezos",
+      "name": "Jeff Bezos"
+    },
+    {
+      "handle": "michaeljburry",
+      "name": "Michael Burry"
+    },
+    {
+      "handle": "sgblank",
+      "name": "Steve Blank"
+    },
+    {
+      "handle": "UriLevine1",
+      "name": "Uri Levine"
+    }
+  ]
+}
