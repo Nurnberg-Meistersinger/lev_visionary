@@ -7,16 +7,38 @@ def generate_summary(text):
     prompt = f"""
 Ты — профессиональный редактор технологических новостей.
 
-Сделай два результата по тексту статьи:
+ВАЖНО: Весь ответ должен быть ТОЛЬКО на русском языке!
 
-1) TLDR — 1–2 предложения, максимально кратко и ёмко.
-2) Summary — 5–7 предложений, развернутое, но компактное резюме.
+Проанализируй статью и создай три вида резюме:
 
-Верни строго JSON формата:
+1) TLDR — СТРОГО 2 предложения (максимум 200 символов)
+   • Максимально ёмко передай суть статьи
+   • Без вводных слов и воды
+   • Только русский язык!
+
+2) Summary — 5-7 предложений
+   • Развернутое описание ключевых идей
+   • Только русский язык!
+
+3) Bullet Points — СТРОГО 4-5 пунктов
+   • Каждый пункт: одна конкретная мысль
+   • Максимум 100 символов на пункт
+   • Без вводных слов
+   • Только русский язык!
+
+Верни строго JSON формата (без markdown блоков):
 {{
-  "tldr": "...",
-  "summary": "..."
+  "tldr": "Краткое описание на русском, максимум 2 предложения",
+  "summary": "Развернутое описание на русском, 5-7 предложений",
+  "bullet_points": [
+    "Первый ключевой тезис на русском",
+    "Второй ключевой тезис на русском",
+    "Третий ключевой тезис на русском",
+    "Четвёртый ключевой тезис на русском"
+  ]
 }}
+
+КРИТИЧЕСКИ ВАЖНО: ВСЁ НА РУССКОМ ЯЗЫКЕ!
 """
 
     headers = {
@@ -29,24 +51,50 @@ def generate_summary(text):
         "model": LLM_MODEL,
         "messages": [
             {"role": "user", "content": prompt + "\n\nARTICLE:\n" + text}
-        ]
+        ],
+        "stream": False
     }
 
     r = requests.post(LLM_ENDPOINT, headers=headers, json=payload)
+    r.raise_for_status()
 
-    raw = r.json()
+    # Обработка NDJSON (если Ollama вернул несколько строк JSON)
+    text_response = r.text.strip()
+    if '\n' in text_response:
+        # Берем последнюю строку (финальный ответ)
+        lines = [line for line in text_response.split('\n') if line.strip()]
+        raw = json.loads(lines[-1])
+    else:
+        raw = r.json()
 
     try:
         content = raw["choices"][0]["message"]["content"]
-        parsed = json.loads(content)
 
-        tldr = parsed.get("tldr", "")
-        summary = parsed.get("summary", "")
+        # Удаляем markdown блоки ```json ... ```
+        content = content.replace("```json", "").replace("```", "").strip()
 
-        # Возвращаем ОДНУ строку — готовую для отправки в Telegram
-        return f"🔥 <b>TLDR:</b> {tldr}\n\n<b>Summary:</b> {summary}"
+        # Пытаемся найти JSON объект в тексте
+        start = content.find("{")
+        end = content.rfind("}")
+
+        if start != -1 and end != -1:
+            json_text = content[start:end+1]
+            parsed = json.loads(json_text)
+
+            # Возвращаем словарь с данными
+            return {
+                "tldr": parsed.get("tldr", ""),
+                "summary": parsed.get("summary", ""),
+                "bullet_points": parsed.get("bullet_points", [])
+            }
+        else:
+            raise ValueError("No JSON found in content")
 
     except Exception as e:
         print("LLM PARSE ERROR:", e)
         print("RAW OUTPUT:", raw)
-        return "🔥 <b>TLDR:</b> недоступно\n\n<b>Summary:</b> недоступно"
+        return {
+            "tldr": "Недоступно",
+            "summary": "Недоступно",
+            "bullet_points": []
+        }

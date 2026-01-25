@@ -3,8 +3,9 @@ import traceback
 
 from rss_reader import fetch_rss
 from article_parser import extract_article_text
+from article_ranker import rank_articles
 from summarizer import generate_summary
-from telegram_sender import send_message
+from telegram_sender import send_message, send_comment
 
 PROCESSED_FILE = "processed_news.json"
 
@@ -26,7 +27,7 @@ def save_processed(ids):
         print("❌ Ошибка сохранения processed:", e)
 
 
-def run():
+def run(limit=None):
     print("\n=== Запуск мониторинга a16z Daily Newsletter ===")
 
     entries = fetch_rss()
@@ -35,62 +36,151 @@ def run():
     processed = load_processed()
     print("Уже обработано:", processed)
 
-    for entry in entries:
+    # 1) Собираем метаданные всех новых статей
+    new_articles = []
+    entries_map = {}  # slug -> entry для быстрого поиска
 
+    for entry in entries:
         slug = entry.id.strip()
-        print("\n--- Новая проверка ---")
-        print("Slug:", slug)
 
         if not slug:
             print("⚠ Пустой slug — пропуск")
             continue
 
         if slug in processed:
-            print("⏭ Уже обработано:", slug)
+            print(f"⏭ Уже обработано: {slug}")
             continue
 
-        print("Заголовок:", entry.title)
-        print("URL:", entry.link)
+        new_articles.append({
+            "slug": slug,
+            "title": entry.title,
+            "link": entry.link
+        })
+        entries_map[slug] = entry
 
-        # 1) Парсим статью
+    if not new_articles:
+        print("\n📭 Нет новых статей для публикации")
+        print("\n=== Готово ===")
+        return
+
+    print(f"\n📊 Найдено {len(new_articles)} новых статей")
+
+    # 2) Ранжируем статьи через LLM и получаем топ-5
+    print("\n🤖 Отправка статей на ранжирование...")
+    try:
+        top_5_slugs = rank_articles(new_articles)
+        print(f"✅ LLM выбрал топ-{len(top_5_slugs)} статей: {top_5_slugs}")
+    except Exception as e:
+        print(f"❌ Ошибка ранжирования: {e}")
+        traceback.print_exc()
+        # Fallback: берём первые 5 статей
+        top_5_slugs = [a["slug"] for a in new_articles[:5]]
+        print(f"⚠️  Используем первые {len(top_5_slugs)} статей: {top_5_slugs}")
+
+    # 3) Для топ-5 парсим полный текст и генерируем summary
+    articles_data = []
+
+    for slug in top_5_slugs:
+        if slug not in entries_map:
+            print(f"⚠ Slug {slug} не найден в entries_map — пропуск")
+            continue
+
+        entry = entries_map[slug]
+
+        print(f"\n--- Обработка статьи ---")
+        print(f"Slug: {slug}")
+        print(f"Заголовок: {entry.title}")
+        print(f"URL: {entry.link}")
+
+        # Парсим статью
         text = extract_article_text(entry.link)
-        print("Текст, длина:", len(text))
+        print(f"Текст, длина: {len(text)}")
 
         if not text.strip():
             print("⚠ Пустой текст — пропуск")
             continue
 
-        # 2) Summary (одна строка с TLDR + Summary)
-        summary = generate_summary(text)
-        print("SUMMARY:", repr(summary))
+        # Генерируем summary с TLDR и bullet points
+        summary_data = generate_summary(text)
+        print(f"TLDR: {summary_data.get('tldr', '')[:100]}...")
+        print(f"Bullet points: {len(summary_data.get('bullet_points', []))}")
 
-        if not summary.strip():
-            print("⚠ Пустое summary — пропуск")
+        if not summary_data.get("tldr") or summary_data.get("tldr") == "Недоступно":
+            print("⚠ Не удалось сгенерировать summary — пропуск")
             continue
 
-        # 3) Telegram сообщение
-        message = (
-            f"📰 <b>a16z Daily News</b>\n\n"
-            f"📌 <b>{entry.title}</b>\n"
-            f"🔗 {entry.link}\n\n"
-            f"━━━━━━━━━━━━━━\n\n"
-            f"{summary}\n\n"
-            f"━━━━━━━━━━━━━━\n"
-            f"#a16z #news"
-        )
+        # Сохраняем данные статьи
+        articles_data.append({
+            "slug": slug,
+            "title": entry.title,
+            "link": entry.link,
+            "tldr": summary_data.get("tldr", ""),
+            "summary": summary_data.get("summary", ""),
+            "bullet_points": summary_data.get("bullet_points", [])
+        })
+
+    if not articles_data:
+        print("\n📭 Не удалось обработать ни одной статьи из топ-5")
+        print("\n=== Готово ===")
+        return
+
+    print(f"\n📊 Успешно обработано {len(articles_data)} статей из топ-5")
+
+    # 3) Формируем дайджест-пост
+    digest_lines = ["📰 <b>a16z Daily Digest</b>\n"]
+
+    for i, article in enumerate(articles_data, 1):
+        digest_lines.append(f"\n{i}️⃣ <b>{article['title']}</b>")
+        digest_lines.append(f"💡 {article['tldr']}")
+        digest_lines.append(f"🔗 {article['link']}\n")
+
+    digest_lines.append("\n━━━━━━━━━━━━━━")
+    digest_lines.append("\n💬 Детальные выводы в комментариях")
+    digest_lines.append("\n#a16z #digest")
+
+    digest_message = "\n".join(digest_lines)
+
+    # 4) Отправляем дайджест в канал
+    try:
+        print("\n📨 Отправка дайджеста в канал...")
+        digest_message_id = send_message(digest_message)
+        print(f"✅ Дайджест отправлен (message_id: {digest_message_id})")
+    except Exception as e:
+        print("❌ Ошибка отправки дайджеста:", e)
+        traceback.print_exc()
+        return
+
+    # 5) Отправляем комментарии к каждой статье в Discussion Group
+    print("\n📝 Отправка детальных комментариев в Discussion Group...")
+    for i, article in enumerate(articles_data, 1):
+        comment_lines = [
+            f"<b>{i}. {article['title']}</b>\n",
+            f"<b>Ключевые тезисы:</b>\n"
+        ]
+
+        if article["bullet_points"]:
+            for point in article["bullet_points"]:
+                comment_lines.append(f"• {point}")
+        else:
+            comment_lines.append(f"• {article['summary']}")
+
+        comment_lines.append(f"\n🔗 {article['link']}")
+
+        comment_message = "\n".join(comment_lines)
 
         try:
-            send_message(message)
-            print("📨 Отправлено в Telegram.")
+            send_comment(comment_message, digest_message_id)
+            print(f"  ✅ Комментарий {i}/{len(articles_data)} отправлен")
         except Exception as e:
-            print("❌ Telegram ошибка:", e)
+            print(f"  ❌ Ошибка отправки комментария {i}: {e}")
             traceback.print_exc()
-            continue
 
-        # 4) Сохраняем slug
-        processed.add(slug)
-        save_processed(processed)
+    # 6) Сохраняем обработанные slugs
+    for article in articles_data:
+        processed.add(article["slug"])
 
+    save_processed(processed)
+    print(f"\n✅ Обработано и сохранено {len(articles_data)} статей")
     print("\n=== Готово ===")
 
 

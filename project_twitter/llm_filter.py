@@ -57,11 +57,20 @@ def analyze_tweets(tweets):
         headers=headers,
         json={
             "model": LLM_MODEL,
-            "messages": [{"role": "user", "content": prompt}]
+            "messages": [{"role": "user", "content": prompt}],
+            "stream": False
         }
     )
+    response.raise_for_status()
 
-    data = response.json()
+    # Обработка NDJSON (если Ollama вернул несколько строк JSON)
+    text_response = response.text.strip()
+    if '\n' in text_response:
+        # Берем последнюю строку (финальный ответ)
+        lines = [line for line in text_response.split('\n') if line.strip()]
+        data = json.loads(lines[-1])
+    else:
+        data = response.json()
     content = data["choices"][0]["message"]["content"].strip()
 
     # --------------------------

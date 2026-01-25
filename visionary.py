@@ -2,9 +2,29 @@
 from __future__ import annotations
 
 import argparse
+import os
 import subprocess
 import sys
 from pathlib import Path
+
+# Автоматическое использование виртуального окружения
+VENV_DIR = Path(__file__).resolve().parent / ".the_vis"
+VENV_PYTHON = VENV_DIR / "bin" / "python3"
+
+def ensure_venv():
+    """Перезапускает скрипт через Python из виртуального окружения, если необходимо"""
+    # Проверяем, запущен ли скрипт из venv
+    in_venv = hasattr(sys, 'real_prefix') or (
+        hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix
+    )
+
+    # Если не в venv и venv существует - перезапускаем
+    if not in_venv and VENV_PYTHON.exists():
+        print(f"🔄 Перезапуск через виртуальное окружение: {VENV_PYTHON}")
+        os.execv(str(VENV_PYTHON), [str(VENV_PYTHON)] + sys.argv)
+    elif not in_venv and not VENV_PYTHON.exists():
+        print(f"⚠️  Виртуальное окружение не найдено: {VENV_DIR}")
+        print(f"Создайте его командой: python3 -m venv .the_vis && .the_vis/bin/pip install -r requirements.txt")
 
 ACCOUNT_SETS_DIR = Path(__file__).resolve().parent / "project_twitter" / "account_sets"
 SET_FLAGS = {
@@ -80,23 +100,24 @@ def _gather_twitter_sets(args: argparse.Namespace) -> list[str]:
     ]
 
 
-    def _build_project_command(args: argparse.Namespace) -> list[str]:
-        if args.twitter:
-            if args.all:
-                twitter_sets = list(SET_FLAGS.values())
-            else:
-                twitter_sets = _gather_twitter_sets(args)
-            if not twitter_sets:
-                raise ValueError("Добавьте хотя бы один флаг набора для --twitter")
-            return [
-                sys.executable,
-                "project_twitter/main.py",
-                "--set",
-                ",".join(twitter_sets),
-            ]
-
+def _build_project_command(args: argparse.Namespace) -> list[str]:
+    if args.twitter:
         if args.all:
-            return [sys.executable, "run_all.py"]
+            twitter_sets = list(SET_FLAGS.values())
+        else:
+            twitter_sets = _gather_twitter_sets(args)
+        if not twitter_sets:
+            raise ValueError("Добавьте хотя бы один флаг набора для --twitter")
+        return [
+            sys.executable,
+            "project_twitter/main.py",
+            "--set",
+            ",".join(twitter_sets),
+        ]
+
+    if args.all:
+        return [sys.executable, "run_all.py"]
+
     if args.a16z:
         return [sys.executable, "project_a16z/main.py"]
     if args.techcrunch_startup:
@@ -108,6 +129,8 @@ def _gather_twitter_sets(args: argparse.Namespace) -> list[str]:
 
 
 def main() -> None:
+    ensure_venv()
+
     parser = build_parser()
     args = parser.parse_args()
 
