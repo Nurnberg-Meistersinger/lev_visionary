@@ -1,3 +1,4 @@
+import json
 import requests
 import html
 from config import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
@@ -45,17 +46,26 @@ def send_message(text: str):
     r = requests.post(url, json=payload)
     r.raise_for_status()
 
+    response_data = r.json()
+
+    # DEBUG: выводим полный ответ для анализа
+    print(f"\n🔍 DEBUG: Telegram API response:")
+    print(json.dumps(response_data, indent=2, ensure_ascii=False))
+
     # Возвращаем message_id для дальнейшей работы с комментариями
-    return r.json()["result"]["message_id"]
+    return response_data["result"]["message_id"]
 
 
-def send_comment(text: str, message_id: int):
+def send_comment(text: str, message_id: int | None = None):
     """
     Отправляет комментарий к посту в Discussion Group.
 
+    ВАЖНО: message_id игнорируется, т.к. Telegram не поддерживает reply между каналом и группой.
+    Комментарии отправляются как обычные сообщения в группу.
+
     Args:
         text: Текст комментария
-        message_id: ID сообщения в канале, к которому пишем комментарий
+        message_id: Игнорируется (оставлен для обратной совместимости)
 
     Returns:
         message_id: ID отправленного комментария
@@ -67,8 +77,8 @@ def send_comment(text: str, message_id: int):
     payload = {
         "chat_id": DISCUSSION_GROUP_ID,
         "text": safe_text,
-        "parse_mode": "HTML",
-        "reply_to_message_id": message_id
+        "parse_mode": "HTML"
+        # НЕ используем reply_to_message_id - он не работает между каналом и группой
     }
 
     r = requests.post(url, json=payload)

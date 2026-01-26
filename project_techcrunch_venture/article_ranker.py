@@ -33,23 +33,23 @@ def rank_articles(articles):
 
 3. Вернуть строго JSON следующего вида:
 
-{
+{{
   "top_articles": [
-    {
+    {{
       "slug": "строка",
       "importance": число,
       "reason": "краткое объяснение важности (1-2 предложения на русском)"
-    }
+    }}
   ]
-}
+}}
 
 Ни комментариев, ни объяснений — только JSON.
 
 Вот статьи для анализа:
 ###
-{}
+{articles}
 ###
-""".format(articles_json)
+""".format(articles=articles_json)
 
     headers = {
         "Content-Type": "application/json"
