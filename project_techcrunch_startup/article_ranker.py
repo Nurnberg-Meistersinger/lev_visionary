@@ -1,7 +1,7 @@
 import json
-import requests
+import anthropic
 
-from config import LLM_API_KEY, LLM_ENDPOINT, LLM_MODEL
+from config import LLM_API_KEY, LLM_MODEL
 
 
 def rank_articles(articles):
@@ -51,46 +51,35 @@ def rank_articles(articles):
 ###
 """.format(articles=articles_json)
 
-    headers = {
-        "Content-Type": "application/json"
-    }
-    if LLM_API_KEY:
-        headers["Authorization"] = f"Bearer {LLM_API_KEY}"
-
-    response = requests.post(
-        LLM_ENDPOINT,
-        headers=headers,
-        json={
-            "model": LLM_MODEL,
-            "messages": [{"role": "user", "content": prompt}],
-            "stream": False
-        }
-    )
-    response.raise_for_status()
-
-    # Обработка NDJSON (если Ollama вернул несколько строк JSON)
-    text_response = response.text.strip()
-    if '\n' in text_response:
-        lines = [line for line in text_response.split('\n') if line.strip()]
-        data = json.loads(lines[-1])
-    else:
-        data = response.json()
-
-    content = data["choices"][0]["message"]["content"].strip()
-
-    # Удаляем markdown блоки
-    content = content.replace("```json", "").replace("```", "").strip()
-
-    # Находим JSON
-    start = content.find("{")
-    end = content.rfind("}")
-
-    if start == -1 or end == -1:
-        raise ValueError(f"LLM вернул не-JSON:\n{content}")
-
-    json_text = content[start:end+1]
-
+    content = None
     try:
+        # Создаем клиент Claude
+        client = anthropic.Anthropic(api_key=LLM_API_KEY)
+
+        # Отправляем запрос к Claude API
+        message = client.messages.create(
+            model=LLM_MODEL,
+            max_tokens=2048,
+            messages=[
+                {"role": "user", "content": prompt}
+            ]
+        )
+
+        # Извлекаем текст ответа
+        content = message.content[0].text.strip()
+
+        # Удаляем markdown блоки
+        content = content.replace("```json", "").replace("```", "").strip()
+
+        # Находим JSON
+        start = content.find("{")
+        end = content.rfind("}")
+
+        if start == -1 or end == -1:
+            raise ValueError(f"LLM вернул не-JSON:\n{content}")
+
+        json_text = content[start:end+1]
+
         result = json.loads(json_text)
         top_articles = result.get("top_articles", [])
 
@@ -99,6 +88,6 @@ def rank_articles(articles):
     except Exception as e:
         raise ValueError(
             f"Не удалось разобрать JSON.\n\n"
-            f"Исходный ответ модели:\n{content}\n\n"
-            f"Выделенный JSON:\n{json_text}"
+            f"Исходный ответ модели:\n{content if content else 'N/A'}\n\n"
+            f"Ошибка: {e}"
         ) from e

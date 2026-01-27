@@ -67,8 +67,8 @@ def send_comment(text: str, message_id: int):
     payload = {
         "chat_id": DISCUSSION_GROUP_ID,
         "text": safe_text,
-        "parse_mode": "HTML",
-        "reply_to_message_id": message_id
+        "parse_mode": "HTML"
+        # НЕ используем reply_to_message_id - он не работает между каналом и группой
     }
 
     r = requests.post(url, json=payload)

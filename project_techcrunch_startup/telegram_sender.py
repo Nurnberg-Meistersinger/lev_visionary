@@ -1,4 +1,3 @@
-import json
 import requests
 import html
 from config import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
@@ -46,14 +45,8 @@ def send_message(text: str):
     r = requests.post(url, json=payload)
     r.raise_for_status()
 
-    response_data = r.json()
-
-    # DEBUG: выводим полный ответ для анализа
-    print(f"\n🔍 DEBUG: Telegram API response:")
-    print(json.dumps(response_data, indent=2, ensure_ascii=False))
-
     # Возвращаем message_id для дальнейшей работы с комментариями
-    return response_data["result"]["message_id"]
+    return r.json()["result"]["message_id"]
 
 
 def send_comment(text: str, message_id: int | None = None):

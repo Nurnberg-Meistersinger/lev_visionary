@@ -48,10 +48,8 @@ async def collect_posts_from_set(set_name: str) -> list:
                 # Добавляем метаинформацию о категории и авторе
                 p["category"] = set_name
                 p["author"] = {
-                    "name": acc["name"],
-                    "organization": acc["organization"],
-                    "title": acc["title"],
-                    "handle": acc["handle"]
+                    "name": acc.get("name", "Unknown"),
+                    "handle": acc.get("handle", "unknown")
                 }
                 all_new_posts.append(p)
                 mark_as_processed(p["id"])
@@ -81,11 +79,20 @@ async def process_set_async(set_name: str, top_n: int = 10) -> None:
 
     print(f"\n📊 Всего собрано новых постов: {len(all_new_posts)}")
 
+    # Создаём словарь для быстрого поиска оригинальных постов по id
+    posts_by_id = {p["id"]: p for p in all_new_posts}
+
     # Фильтруем через LLM
     print(f"\n🤖 Отправка постов на LLM-анализ (топ-{top_n})...")
     try:
         result = analyze_tweets(all_new_posts, top_n=top_n)
         important_tweets = result.get("important", [])
+
+        # Добавляем данные авторов из оригинальных постов
+        for tweet in important_tweets:
+            original = posts_by_id.get(tweet["id"], {})
+            tweet["author"] = original.get("author", {})
+
         print(f"✅ LLM выбрал {len(important_tweets)} важных твитов")
     except Exception as e:
         print(f"❌ Ошибка LLM-анализа: {e}")
@@ -97,7 +104,8 @@ async def process_set_async(set_name: str, top_n: int = 10) -> None:
                 "importance": 6,
                 "summary": p["text"][:200],
                 "insights": [],
-                "category": p.get("category", set_name)
+                "category": p.get("category", set_name),
+                "author": p.get("author", {})
             }
             for p in all_new_posts[:top_n]
         ]
@@ -112,9 +120,9 @@ async def process_set_async(set_name: str, top_n: int = 10) -> None:
 
     for i, tweet in enumerate(important_tweets, 1):
         author = tweet.get("author", {})
-        author_line = f"{author.get('name', 'Unknown')}, {author.get('organization', 'Unknown')}, {author.get('title', 'Unknown')} (@{author.get('handle', 'unknown')})"
+        author_line = f"{author.get('name', 'Unknown')} (@{author.get('handle', 'unknown')})"
 
-        digest_lines.append(f"\n{i}️⃣ {author_line}")
+        digest_lines.append(f"\n<b>{i}.</b> {author_line}")
         digest_lines.append(f"🔗 {tweet['url']}")
         digest_lines.append(f"📋 {tweet.get('short_tldr', 'Нет темы')}\n")
 
@@ -142,7 +150,7 @@ async def process_set_async(set_name: str, top_n: int = 10) -> None:
     print("\n📝 Отправка комментариев в Discussion Group...")
     for i, tweet in enumerate(important_tweets, 1):
         author = tweet.get("author", {})
-        author_line = f"{author.get('name', 'Unknown')}, {author.get('organization', 'Unknown')}, {author.get('title', 'Unknown')} (@{author.get('handle', 'unknown')})"
+        author_line = f"{author.get('name', 'Unknown')} (@{author.get('handle', 'unknown')})"
 
         comment_lines = [
             f"<b>{i}. {author_line}</b>\n",
@@ -188,15 +196,20 @@ async def process_all_sets_async() -> None:
 
         print(f"\n📊 Собрано {len(all_new_posts)} постов из {set_name}")
 
+        # Создаём словарь для быстрого поиска
+        posts_by_id = {p["id"]: p for p in all_new_posts}
+
         # Берём топ-2 из категории
         print(f"\n🤖 LLM-анализ {set_name} (топ-2)...")
         try:
             result = analyze_tweets(all_new_posts, top_n=2)
             important_tweets = result.get("important", [])
 
-            # Добавляем метку категории
+            # Добавляем метку категории и данные авторов
             for tweet in important_tweets:
                 tweet["category"] = set_name
+                original = posts_by_id.get(tweet["id"], {})
+                tweet["author"] = original.get("author", {})
 
             all_important_tweets.extend(important_tweets)
             print(f"✅ Выбрано {len(important_tweets)} твитов из {set_name}")
@@ -210,7 +223,8 @@ async def process_all_sets_async() -> None:
                     "importance": 6,
                     "summary": p["text"][:200],
                     "insights": [],
-                    "category": set_name
+                    "category": set_name,
+                    "author": p.get("author", {})
                 }
                 for p in all_new_posts[:2]
             ]
@@ -242,9 +256,9 @@ async def process_all_sets_async() -> None:
 
         for tweet in tweets:
             author = tweet.get("author", {})
-            author_line = f"{author.get('name', 'Unknown')}, {author.get('organization', 'Unknown')}, {author.get('title', 'Unknown')} (@{author.get('handle', 'unknown')})"
+            author_line = f"{author.get('name', 'Unknown')} (@{author.get('handle', 'unknown')})"
 
-            digest_lines.append(f"{counter}️⃣ {author_line}")
+            digest_lines.append(f"<b>{counter}.</b> {author_line}")
             digest_lines.append(f"🔗 {tweet['url']}")
             digest_lines.append(f"📋 {tweet.get('short_tldr', 'Нет темы')}\n")
             counter += 1
@@ -273,7 +287,7 @@ async def process_all_sets_async() -> None:
     print("\n📝 Отправка комментариев в Discussion Group...")
     for i, tweet in enumerate(all_important_tweets, 1):
         author = tweet.get("author", {})
-        author_line = f"{author.get('name', 'Unknown')}, {author.get('organization', 'Unknown')}, {author.get('title', 'Unknown')} (@{author.get('handle', 'unknown')})"
+        author_line = f"{author.get('name', 'Unknown')} (@{author.get('handle', 'unknown')})"
         category_label = normalize_set_label(tweet.get("category", "unknown"))
 
         comment_lines = [

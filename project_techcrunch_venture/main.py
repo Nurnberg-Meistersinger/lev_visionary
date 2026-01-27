@@ -67,24 +67,41 @@ def run():
     print(f"\n📊 Найдено {len(new_articles)} новых статей")
 
     # 2) Ранжируем статьи через LLM и получаем топ-5
-    print("\n🤖 Отправка статей на ранжирование...")
-    try:
-        top_5_slugs = rank_articles(new_articles)
-        print(f"✅ LLM выбрал топ-{len(top_5_slugs)} статей: {top_5_slugs}")
-    except Exception as e:
-        print(f"❌ Ошибка ранжирования: {e}")
-        traceback.print_exc()
-        # Fallback: берём первые 5 статей
-        top_5_slugs = [a["slug"] for a in new_articles[:5]]
-        print(f"⚠️  Используем первые {len(top_5_slugs)} статей: {top_5_slugs}")
+    if len(new_articles) <= 5:
+        # Если статей 5 или меньше, берем все без ранжирования
+        top_5_slugs = [a["slug"] for a in new_articles]
+        print(f"✅ Статей {len(new_articles)} ≤ 5, берём все: {top_5_slugs}")
+    else:
+        # Если статей больше 5, используем LLM для выбора топ-5
+        print("\n🤖 Отправка статей на ранжирование...")
+        try:
+            top_5_slugs = rank_articles(new_articles)
+            print(f"✅ LLM выбрал топ-{len(top_5_slugs)} статей: {top_5_slugs}")
+        except Exception as e:
+            print(f"❌ Ошибка ранжирования: {e}")
+            traceback.print_exc()
+            # Fallback: берём первые 5 статей
+            top_5_slugs = [a["slug"] for a in new_articles[:5]]
+            print(f"⚠️  Используем первые {len(top_5_slugs)} статей: {top_5_slugs}")
+
+    # Валидируем slug и дополняем недостающие
+    valid_slugs = [s for s in top_5_slugs if s in items_map]
+    invalid_slugs = [s for s in top_5_slugs if s not in items_map]
+
+    if invalid_slugs:
+        print(f"⚠️  LLM выбрал несуществующие slug: {invalid_slugs}")
+        # Добавляем статьи которых нет в выбранных
+        available_slugs = [a["slug"] for a in new_articles if a["slug"] not in valid_slugs]
+        needed = 5 - len(valid_slugs)
+        valid_slugs.extend(available_slugs[:needed])
+        print(f"✅ Дополнено до {len(valid_slugs)} статей: {valid_slugs}")
+
+    top_5_slugs = valid_slugs[:5]  # Гарантируем не больше 5
 
     # 3) Для топ-5 парсим полный текст и генерируем summary
     articles_data = []
 
     for slug in top_5_slugs:
-        if slug not in items_map:
-            print(f"⚠ Slug {slug} не найден в items_map — пропуск")
-            continue
 
         item = items_map[slug]
 
@@ -136,7 +153,7 @@ def run():
         digest_lines.append(f"🔗 {article['link']}\n")
 
     digest_lines.append("\n━━━━━━━━━━━━━━")
-    digest_lines.append("\n💬 Детальные выводы в комментариях")
+    digest_lines.append("\n💬 Детальные выводы — в группе обсуждения")
     digest_lines.append("\n#techcrunch #venture #digest")
 
     digest_message = "\n".join(digest_lines)
