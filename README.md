@@ -1,112 +1,112 @@
 # The Visionary
 
-The Visionary — это AI-платформа для автоматической агрегации и анализа контента, которая собирает информацию из разных источников, обрабатывает её с помощью больших языковых моделей (LLM) и отправляет автоматические дайджесты в Telegram. Проект помогает оставаться в курсе событий в технологиях, стартапах, венчурном капитале и блокчейне.
-
-Оркестратор и набор самостоятельных скриптов, которые собирают тексты из `project_a16z`, `project_techcrunch_*` и `project_twitter`, пропускают через LLM и отсылают дайджесты в Telegram. Все LLM-запросы идут через настраиваемый endpoint (по умолчанию локальный Ollama), так что можно использовать собственную модель.
+The Visionary — это AI-платформа для автоматической агрегации и анализа контента, которая собирает информацию из разных источников, обрабатывает её с помощью Claude API и отправляет дайджесты в Telegram.
 
 ## Структура
 
 | Проект | Источник | Что делает |
 | --- | --- | --- |
-| `project_a16z` | a16z Daily Newsletter | Скачивает свежие статьи и генерирует TL;DR + summary по заданному prompt’у. |
-| `project_techcrunch_startup` | TechCrunch Startups | Тоже делает TL;DR + summary для нескольких публикаций. |
-| `project_techcrunch_venture` | TechCrunch Venture | Аналогично, но для секции Venture. |
-| `project_twitter` | X/Twitter | Подбирает важные твиты по группам аккаунтов, передаёт их в LLM и формирует структурированный дайджест. |
+| `project_a16z` | a16z Daily Newsletter | Скачивает свежие статьи и генерирует TL;DR + summary |
+| `project_techcrunch_startup` | TechCrunch Startups | TL;DR + summary для публикаций о стартапах |
+| `project_techcrunch_venture` | TechCrunch Venture | TL;DR + summary для секции Venture |
+| `project_twitter` | X/Twitter | Подбирает важные твиты по группам аккаунтов, анализирует через LLM |
 
 ## Быстрый старт
 
-1. Python 3.12+ и виртуальное окружение в корне:  
-   - PowerShell: `python -m venv .the_vis; .\.the_vis\Scripts\Activate.ps1`  
-   - macOS/Linux: `python -m venv .the_vis && source ./.the_vis/bin/activate`
-2. `pip install -r requierements.txt`
-3. Заполните `.env` (см. ниже) и `source .env`
-4. Запускайте нужный проект через CLI `visionary.py run` (ниже).
+1. Python 3.12+ и виртуальное окружение:
+   ```bash
+   python -m venv .the_vis && source ./.the_vis/bin/activate
+   ```
 
-`run_all.py` по-прежнему полезен для массового прогонки всех проектов: `python run_all.py`.
+2. Установка зависимостей:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-## CLI `visionary run`
+3. Заполните `.env` (см. раздел Конфигурация)
 
-```
+4. Запуск:
+   ```bash
+   python visionary.py run --all
+   ```
+
+## CLI
+
+```bash
+# Все проекты
 python visionary.py run --all
+
+# Twitter по наборам аккаунтов
 python visionary.py run --twitter --palantir
 python visionary.py run --twitter --cypherpunk
 python visionary.py run --twitter --blockchain
 python visionary.py run --twitter --venture
-python visionary.py run --twitter --lifestyle
-python visionary.py run --twitter --entrepreneurs
-python visionary.py run --twitter --protectorium
-python visionary.py run --twitter --hackers
-python visionary.py run --twitter --all
+python visionary.py run --twitter --all  # все наборы
+
+# Отдельные проекты
 python visionary.py run --a16z
 python visionary.py run --techcrunch_startup
 python visionary.py run --techcrunch_venture
 ```
 
-- `--all` запускает `python run_all.py`, обходит все проекты один за другим.
-- `--twitter --all` запускает `project_twitter` по всем наборам (аналогично `--per-set` ранее).
-- `--twitter` требует указать один из наборов (`--palantir`, `--cypherpunk`, `--blockchain`, `--venture`, `--lifestyle`, `--entrepreneurs`, `--protectorium`, `--hackers`). Каждый флаг соответствует JSON-файлу в `project_twitter/account_sets`.
-- `--a16z`, `--techcrunch_startup`, `--techcrunch_venture` запускают соответствующие скрипты.
+## Конфигурация `.env`
 
-## Наборы аккаунтов (`project_twitter/account_sets`)
+```env
+# Claude API (Anthropic)
+LLM_MODEL=claude-haiku-4-5-20251001
+LLM_API_KEY=sk-ant-api03-...
 
-Каждый JSON в этой директории описывает группу аккаунтов. Пример:
+# Telegram
+TELEGRAM_TOKEN=your_bot_token
+TELEGRAM_CHAT_ID=-100xxxxxxxxxx
+
+# Twitter (для project_twitter)
+TWITTER_USERNAME=your_twitter_handle
+TWITTER_EMAIL=your_email@example.com
+TWITTER_PASSWORD=your_password
+```
+
+### Получение ключей
+
+- **Claude API**: Регистрация на [console.anthropic.com](https://console.anthropic.com), пополнение баланса от $5
+- **Telegram**: Создать бота через [@BotFather](https://t.me/BotFather), получить токен и chat_id
+- **Twitter**: Использовать credentials от аккаунта (рекомендуется отдельный аккаунт)
+
+## Наборы аккаунтов Twitter
+
+Файлы в `project_twitter/account_sets/*.json`:
 
 ```json
 {
-  "name": "Palantir cluster",
+  "name": "Palantir",
   "description": "Руководство Palantir и близкие сообщества",
   "accounts": [
     {"handle": "PalantirTech", "name": "Palantir Technologies"},
-    {"handle": "PalantirPrivacy", "name": "Palantir Privacy"}
+    {"handle": "ssankar", "name": "Shankar Sankar, Palantir, CTO"}
   ]
 }
 ```
 
-Добавляй собственные файлы, чтобы расширить наборы (имена файлов привязаны к CLI-флагам).
+Добавляйте свои файлы — имя файла становится CLI-флагом.
 
-### cookies для project_twitter
+## LLM и промпты
 
-`project_twitter` использует JSON `cookies.json` (в корне `project_twitter`), чтобы получить доступ к X через Twikit. Перед запуском `visionary.py run --twitter …` положи туда значения `auth_token`, `ct0`, `twid`, `gt` из своего аккаунта. Без этого fetcher выдаст `FileNotFoundError` или ошибки аутентификации.
+Все проекты используют Claude API (библиотека `anthropic`). Промпты настраиваются в:
 
-Пример:
+- `project_*/summarizer.py` — генерация TL;DR и summary для статей
+- `project_twitter/llm_filter.py` — анализ и отбор важных твитов
 
-```json
-{
-  "auth_token": "value",
-  "ct0": "value",
-  "twid": "u%3D123456789",
-  "gt": "123456789"
-}
-```
+### Критерии отбора твитов
 
-Убедись, что файл не коммитишь (он уже в `.gitignore`).
+LLM оценивает твиты по шкале 0-10:
+- Конкретные новости: анонсы, сделки, партнёрства
+- Инсайдерская информация от руководителей
+- Аналитика с цифрами и метриками
+- Стратегические прогнозы экспертов
 
-## Ollama / LLM
+Не выбираются: ретвиты без комментариев, мнения без фактов, мемы.
 
-1. Запусти Ollama (или другой совместимый HTTP API):
-   ```bash
-   ollama pull gpt-oss:20b
-   ollama serve
-   ```
-2. Укажи точку доступа и модель в `.env`. Все сериализованные запросы отправляются как POST с `model` и `messages`.
-3. LLM занимается только форматированием/резюмированием; сбор контента делается Python-скриптами.
+## Стоимость
 
-## Конфигурация и `.env`
-
-```
-LLM_ENDPOINT=http://127.0.0.1:11434/api/chat/completions
-LLM_MODEL=gpt-oss:20b
-LLM_API_KEY=
-
-TELEGRAM_TOKEN=
-TELEGRAM_CHAT_ID=
-```
-
-`LLM_API_KEY` нужен только при вызовах внешнего сервиса. Telegram-данные получаются через BotFather (`/newbot`) и `getUpdates`.
-
-## Контроль над промптами
-
-- `project_a16z/summarizer.py`, `project_techcrunch_startup/summarizer.py`, `project_techcrunch_venture/summarizer.py` задают prompt “Ты — профессиональный редактор…” и рендерят TLDR/summary в HTML для Telegram.
-- `project_twitter/llm_filter.py` формирует prompt “Ты — аналитический ИИ…” и возвращает JSON с `important`, `insights`. Именно от него зависит текст итогового дайджеста Twitter.
-
-Изменяй эти промпты, если хочешь другой тон, формат или структуру сообщений.
+Claude Haiku: ~$0.25 за 1M input токенов, ~$1.25 за 1M output токенов.
+При типичном использовании (несколько дайджестов в день): **~$3-6/месяц**.
