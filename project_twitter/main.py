@@ -156,7 +156,7 @@ async def process_set_async(set_name: str, top_n: int = 10) -> None:
             f"<b>{i}. {author_line}</b>\n",
             f"<b>Summary:</b>",
             f"{tweet.get('summary', 'Нет резюме')}\n",
-            f"<b>Ключевые инсайты:</b>"
+            f"<b>Keypoints:</b>"
         ]
 
         insights = tweet.get("insights", [])
@@ -294,7 +294,7 @@ async def process_all_sets_async() -> None:
             f"<b>{i}. [{category_label}] {author_line}</b>\n",
             f"<b>Summary:</b>",
             f"{tweet.get('summary', 'Нет резюме')}\n",
-            f"<b>Ключевые инсайты:</b>"
+            f"<b>Keypoints:</b>"
         ]
 
         insights = tweet.get("insights", [])
