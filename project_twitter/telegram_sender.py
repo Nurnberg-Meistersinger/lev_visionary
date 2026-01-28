@@ -1,6 +1,6 @@
 import requests
 import html
-from config import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
+from .config import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
 
 # ID Discussion Group, привязанной к каналу
 DISCUSSION_GROUP_ID = "-1003818477216"

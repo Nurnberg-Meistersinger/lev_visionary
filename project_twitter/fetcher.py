@@ -3,7 +3,7 @@ from typing import List, Dict
 from twikit import Client
 from twikit.errors import UserUnavailable
 
-from config import TWITTER_USERNAME, TWITTER_EMAIL, TWITTER_PASSWORD
+from .config import TWITTER_USERNAME, TWITTER_EMAIL, TWITTER_PASSWORD
 
 # Путь к файлу cookies относительно этого файла
 COOKIES_FILE = Path(__file__).parent / "cookies.json"

@@ -2,15 +2,15 @@ import argparse
 import asyncio
 import random
 
-from accounts_loader import (
+from .accounts_loader import (
     load_accounts,
     list_available_sets,
     selected_sets,
 )
-from fetcher import fetch_last_posts_async
-from llm_filter import analyze_tweets
-from post_tracker import filter_new_posts, mark_as_processed
-from telegram_sender import send_message, send_comment
+from .fetcher import fetch_last_posts_async
+from .llm_filter import analyze_tweets
+from .post_tracker import filter_new_posts, mark_as_processed
+from .telegram_sender import send_message, send_comment
 
 
 def normalize_set_label(name: str) -> str:

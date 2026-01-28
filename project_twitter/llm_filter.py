@@ -1,7 +1,7 @@
 import json
 import anthropic
 
-from config import LLM_API_KEY, LLM_MODEL
+from .config import LLM_API_KEY, LLM_MODEL
 
 
 def analyze_tweets(tweets, top_n=10):
