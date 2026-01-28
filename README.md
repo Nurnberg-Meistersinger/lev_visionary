@@ -32,6 +32,8 @@ The Visionary — это AI-платформа для автоматическо
 
 ## CLI
 
+### Запуск из командной строки
+
 ```bash
 # Все проекты
 python visionary.py run --all
@@ -41,12 +43,52 @@ python visionary.py run --twitter --palantir
 python visionary.py run --twitter --cypherpunk
 python visionary.py run --twitter --blockchain
 python visionary.py run --twitter --venture
-python visionary.py run --twitter --all  # все наборы
+python visionary.py run --twitter --entrepreneurs
+python visionary.py run --twitter --hackers
+python visionary.py run --twitter --lifestyle
+python visionary.py run --twitter --protectorium
+python visionary.py run --twitter --ycombinator
+python visionary.py run --twitter --all  # топ-2 из каждого набора
 
 # Отдельные проекты
 python visionary.py run --a16z
 python visionary.py run --techcrunch_startup
 python visionary.py run --techcrunch_venture
+```
+
+### Управление через Telegram-бота
+
+Бот позволяет запускать все проекты удалённо через Telegram (требуется VPS).
+
+**Команды:**
+```
+# Twitter дайджесты
+/digest palantir          — дайджест Palantir (топ-10)
+/digest blockchain        — дайджест Blockchain
+/digest entrepreneurs     — дайджест Entrepreneurs
+/digest hackers           — дайджест Hackers
+/digest lifestyle         — дайджест Lifestyle
+/digest protectorium      — дайджест Protectorium
+/digest venture           — дайджест Venture
+/digest ycombinator       — дайджест Y Combinator
+/digest cypherpunk        — дайджест Cypherpunk
+/digest all               — топ-2 из каждой категории Twitter
+
+# Другие проекты
+/digest a16z              — запустить a16z Daily Newsletter
+/digest techcrunch_startup    — запустить TechCrunch Startups
+/digest techcrunch_venture    — запустить TechCrunch Venture
+
+# Информация
+/projects                 — список всех проектов
+/help                     — справка
+```
+
+**Запуск бота на VPS:**
+```bash
+cd the_visionary
+source .venv/bin/activate
+python -m project_twitter.bot
 ```
 
 ## Конфигурация `.env`
@@ -64,12 +106,18 @@ TELEGRAM_CHAT_ID=-100xxxxxxxxxx
 TWITTER_USERNAME=your_twitter_handle
 TWITTER_EMAIL=your_email@example.com
 TWITTER_PASSWORD=your_password
+
+# Bot admin (для управления через Telegram)
+ADMIN_USER_ID=your_telegram_user_id
 ```
 
 ### Получение ключей
 
 - **Claude API**: Регистрация на [console.anthropic.com](https://console.anthropic.com), пополнение баланса от $5
-- **Telegram**: Создать бота через [@BotFather](https://t.me/BotFather), получить токен и chat_id
+- **Telegram**:
+  - Создать бота через [@BotFather](https://t.me/BotFather), получить `TELEGRAM_TOKEN`
+  - Создать канал, добавить бота как админа, получить `TELEGRAM_CHAT_ID` (например, `-100xxxxxxxxxx`)
+  - Узнать свой `ADMIN_USER_ID` через [@userinfobot](https://t.me/userinfobot) (для управления через команды бота)
 - **Twitter**: Использовать credentials от аккаунта (рекомендуется отдельный аккаунт)
 
 ## Наборы аккаунтов Twitter
