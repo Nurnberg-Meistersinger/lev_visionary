@@ -22,9 +22,9 @@ from telegram.ext import (
     ContextTypes,
 )
 
-from config import TELEGRAM_TOKEN, ADMIN_USER_ID
-from accounts_loader import list_available_sets
-from main import (
+from .config import TELEGRAM_TOKEN, ADMIN_USER_ID
+from .accounts_loader import list_available_sets
+from .main import (
     process_set_async,
     process_all_sets_async,
     normalize_set_label,
