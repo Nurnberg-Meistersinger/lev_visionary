@@ -1,0 +1,8 @@
+python-telegram-bot==21.10
+anthropic==0.52.0
+python-dotenv==1.2.1
+twikit==2.3.3
+requests==2.32.5
+beautifulsoup4==4.14.3
+feedparser==6.0.12
+lxml==6.0.2
