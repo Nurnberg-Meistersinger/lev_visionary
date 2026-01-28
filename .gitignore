@@ -1,1 +1,27 @@
+# Secrets
 .env
+.env.backup
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.the_vis/
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Runtime files
+project_twitter/cookies.json
+project_twitter/processed_posts.json
+
+# OS
+.DS_Store
+Thumbs.db

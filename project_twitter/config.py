@@ -15,3 +15,6 @@ TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
 TWITTER_USERNAME = os.getenv("TWITTER_USERNAME", "")
 TWITTER_EMAIL = os.getenv("TWITTER_EMAIL", "")
 TWITTER_PASSWORD = os.getenv("TWITTER_PASSWORD", "")
+
+# Bot admin
+ADMIN_USER_ID = int(os.getenv("ADMIN_USER_ID", "0"))

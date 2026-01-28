@@ -55,3 +55,5 @@ urllib3==2.6.0
 webvtt-py==0.5.1
 wheel==0.45.1
 yt-dlp==2025.11.12
+python-telegram-bot==21.10
+anthropic==0.52.0
