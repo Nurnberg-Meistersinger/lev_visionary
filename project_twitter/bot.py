@@ -12,6 +12,11 @@ Telegram-бот для управления дайджестами.
     /addto <name> handle1 handle2 ...   - добавить аккаунты в кастомный сет
     /delset <name>                      - удалить кастомный сет
 
+Расписание (настраивается в .env):
+    SCHEDULE_ENABLED=true
+    SCHEDULE_TIME=09:00
+    SCHEDULE_TIMEZONE=Europe/Moscow
+
 Запуск:
     python -m project_twitter.bot
 """
@@ -27,7 +32,10 @@ from telegram.ext import (
     ContextTypes,
 )
 
-from .config import TELEGRAM_TOKEN, ADMIN_USER_ID
+from .config import (
+    TELEGRAM_TOKEN, ADMIN_USER_ID,
+    SCHEDULE_ENABLED, SCHEDULE_TIME, SCHEDULE_TIMEZONE,
+)
 from .accounts_loader import (
     list_available_sets,
     is_custom_set,
@@ -278,6 +286,60 @@ async def cmd_delset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         await update.message.reply_text(f"❌ {e}")
 
 
+async def run_scheduled_digest(context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Запускает все проекты по расписанию и шлёт отчёт админу."""
+    from datetime import datetime
+
+    logger.info("⏰ Запуск планового дайджеста...")
+    start_time = datetime.now()
+    results = []  # список (icon, label)
+
+    # — Не-Twitter проекты —
+    non_twitter = [
+        ("a16z",              "project_a16z"),
+        ("techcrunch_startup", "project_techcrunch_startup"),
+        ("techcrunch_venture", "project_techcrunch_venture"),
+    ]
+    for label, module in non_twitter:
+        try:
+            await run_other_project(module)
+            results.append(("✅", label))
+        except Exception as e:
+            logger.error(f"Scheduled [{label}] error: {e}", exc_info=True)
+            results.append(("❌", f"{label}: {e}"))
+        await asyncio.sleep(60)
+
+    # — Twitter-сеты (все, кроме псевдо-сета "all") —
+    twitter_sets = [s for s in list_available_sets() if s != "all"]
+    for set_name in twitter_sets:
+        try:
+            await process_set_async(set_name, top_n=10)
+            results.append(("✅", f"twitter/{set_name}"))
+        except Exception as e:
+            logger.error(f"Scheduled [twitter/{set_name}] error: {e}", exc_info=True)
+            results.append(("❌", f"twitter/{set_name}: {e}"))
+        await asyncio.sleep(90)
+
+    # — Отчёт админу —
+    elapsed = int((datetime.now() - start_time).total_seconds() / 60)
+    ok  = sum(1 for icon, _ in results if icon == "✅")
+    err = sum(1 for icon, _ in results if icon == "❌")
+
+    lines = ["<b>📅 Плановый дайджест выполнен</b>\n"]
+    for icon, label in results:
+        lines.append(f"{icon} {label}")
+    lines.append(f"\n✅ {ok}  ❌ {err}  ⏱ ~{elapsed} мин")
+
+    try:
+        await context.bot.send_message(
+            chat_id=ADMIN_USER_ID,
+            text="\n".join(lines),
+            parse_mode="HTML",
+        )
+    except Exception as e:
+        logger.error(f"Не удалось отправить отчёт о расписании: {e}")
+
+
 async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Приветствие при /start."""
     user_id = update.effective_user.id
@@ -315,6 +377,19 @@ def main() -> None:
     app.add_handler(CommandHandler("newset", cmd_newset))
     app.add_handler(CommandHandler("addto", cmd_addto))
     app.add_handler(CommandHandler("delset", cmd_delset))
+
+    # Планировщик (если включён в .env)
+    if SCHEDULE_ENABLED:
+        import datetime
+        from zoneinfo import ZoneInfo
+
+        hour, minute = map(int, SCHEDULE_TIME.split(":"))
+        tz = ZoneInfo(SCHEDULE_TIMEZONE)
+        run_time = datetime.time(hour, minute, tzinfo=tz)
+        app.job_queue.run_daily(run_scheduled_digest, time=run_time)
+        print(f"⏰ Планировщик: каждый день в {SCHEDULE_TIME} ({SCHEDULE_TIMEZONE})")
+    else:
+        print("ℹ️  Планировщик отключён (SCHEDULE_ENABLED=false в .env)")
 
     # Запускаем polling
     print("✅ Бот запущен. Ожидание команд...")

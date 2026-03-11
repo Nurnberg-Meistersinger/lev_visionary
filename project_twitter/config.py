@@ -18,3 +18,8 @@ TWITTER_PASSWORD = os.getenv("TWITTER_PASSWORD", "")
 
 # Bot admin
 ADMIN_USER_ID = int(os.getenv("ADMIN_USER_ID", "0"))
+
+# Расписание автоматических дайджестов
+SCHEDULE_ENABLED  = os.getenv("SCHEDULE_ENABLED", "false").lower() == "true"
+SCHEDULE_TIME     = os.getenv("SCHEDULE_TIME", "09:00")       # HH:MM
+SCHEDULE_TIMEZONE = os.getenv("SCHEDULE_TIMEZONE", "Europe/Moscow")

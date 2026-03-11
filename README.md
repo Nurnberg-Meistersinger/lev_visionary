@@ -114,7 +114,33 @@ TWITTER_PASSWORD=your_password
 
 # Bot admin (для управления через Telegram)
 ADMIN_USER_ID=your_telegram_user_id
+
+# Расписание автоматических дайджестов (опционально)
+SCHEDULE_ENABLED=true
+SCHEDULE_TIME=09:00
+SCHEDULE_TIMEZONE=Europe/Moscow
 ```
+
+Часовые пояса: `Europe/Moscow`, `UTC`, `Europe/Berlin`, `Asia/Tbilisi` и т.д. (стандарт IANA).
+
+## Автозапуск по расписанию
+
+При `SCHEDULE_ENABLED=true` бот каждый день в указанное время автоматически запускает все проекты **последовательно** и присылает тебе в личку отчёт:
+
+```
+📅 Плановый дайджест выполнен
+
+✅ a16z
+✅ techcrunch_startup
+✅ techcrunch_venture
+✅ twitter/palantir
+✅ twitter/blockchain
+...
+
+✅ 12  ❌ 0  ⏱ ~24 мин
+```
+
+Порядок запуска: сначала три RSS-проекта (a16z, TechCrunch ×2) с задержкой 60 сек между ними, затем все Twitter-сеты с задержкой 90 сек между каждым. Ручные команды `/digest` работают независимо от расписания.
 
 ### Получение ключей
 

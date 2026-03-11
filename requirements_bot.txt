@@ -1,4 +1,4 @@
-python-telegram-bot==21.10
+python-telegram-bot[job-queue]==21.10
 anthropic==0.52.0
 python-dotenv==1.2.1
 twikit==2.3.3
