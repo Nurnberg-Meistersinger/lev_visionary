@@ -1,11 +1,16 @@
 """
 Telegram-бот для управления дайджестами.
 
-Команды:
+Команды дайджестов:
     /digest <project>  - запустить проект (twitter:palantir, a16z, techcrunch_startup, etc.)
     /digest all        - топ-2 из каждой категории Twitter
     /projects          - список доступных проектов
     /help              - справка
+
+Управление кастомными сетами:
+    /newset <name> handle1 handle2 ...  - создать новый кастомный сет
+    /addto <name> handle1 handle2 ...   - добавить аккаунты в кастомный сет
+    /delset <name>                      - удалить кастомный сет
 
 Запуск:
     python -m project_twitter.bot
@@ -23,7 +28,13 @@ from telegram.ext import (
 )
 
 from .config import TELEGRAM_TOKEN, ADMIN_USER_ID
-from .accounts_loader import list_available_sets
+from .accounts_loader import (
+    list_available_sets,
+    is_custom_set,
+    create_custom_set,
+    add_to_custom_set,
+    delete_custom_set,
+)
 from .main import (
     process_set_async,
     process_all_sets_async,
@@ -59,16 +70,24 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Показать справку."""
     help_text = (
         "<b>📖 Команды бота</b>\n\n"
+        "<b>Дайджесты:</b>\n"
         "<b>/digest &lt;project&gt;</b> — запустить проект:\n"
         "  • Twitter: palantir, blockchain, venture, etc.\n"
-        "  • Другие: a16z, techcrunch_startup, techcrunch_venture\n\n"
+        "  • Другие: a16z, techcrunch_startup, techcrunch_venture\n"
         "<b>/digest all</b> — топ-2 из каждой категории Twitter\n\n"
-        "<b>/projects</b> — список всех проектов\n\n"
+        "<b>Кастомные сеты:</b>\n"
+        "<b>/newset &lt;name&gt; handle1 handle2 ...</b> — создать новый сет\n"
+        "<b>/addto &lt;name&gt; handle1 handle2 ...</b> — добавить аккаунты в сет\n"
+        "<b>/delset &lt;name&gt;</b> — удалить кастомный сет\n\n"
+        "<b>/projects</b> — список всех проектов\n"
         "<b>/help</b> — эта справка\n\n"
         "<i>Примеры:</i>\n"
         "<code>/digest palantir</code>\n"
         "<code>/digest a16z</code>\n"
-        "<code>/digest all</code>"
+        "<code>/digest all</code>\n"
+        "<code>/newset crypto_gurus elonmusk naval balajis</code>\n"
+        "<code>/addto crypto_gurus pmarca</code>\n"
+        "<code>/delset crypto_gurus</code>"
     )
     await update.message.reply_text(help_text, parse_mode="HTML")
 
@@ -77,14 +96,19 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def cmd_projects(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Показать доступные проекты."""
     sets = [s for s in list_available_sets() if s != "all"]
+    builtin_sets = [s for s in sets if not is_custom_set(s)]
+    custom_sets = [s for s in sets if is_custom_set(s)]
 
-    lines = [
-        "<b>📋 Доступные проекты:</b>\n",
-        "<b>Twitter наборы:</b>"
-    ]
-    for s in sets:
+    lines = ["<b>📋 Доступные проекты:</b>\n", "<b>Twitter наборы (встроенные):</b>"]
+    for s in builtin_sets:
         label = normalize_set_label(s)
         lines.append(f"  • <code>{s}</code> — {label}")
+
+    if custom_sets:
+        lines.append("\n<b>Twitter наборы (кастомные):</b>")
+        for s in custom_sets:
+            label = normalize_set_label(s)
+            lines.append(f"  • <code>{s}</code> — {label}")
 
     lines.append("\n<b>Другие проекты:</b>")
     lines.append("  • <code>a16z</code> — a16z Daily Newsletter")
@@ -96,15 +120,30 @@ async def cmd_projects(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
 async def run_other_project(project_name: str) -> None:
     """Запустить проект a16z/techcrunch."""
-    # Динамически импортируем main.py из нужного проекта
-    project_module = __import__(f"{project_name}.main", fromlist=["run"])
+    import importlib.util
 
-    # Запускаем функцию run() из main.py
-    if asyncio.iscoroutinefunction(project_module.run):
-        await project_module.run()
-    else:
-        # Если функция синхронная, запускаем в отдельном потоке
-        await asyncio.to_thread(project_module.run)
+    main_path = project_root / project_name / "main.py"
+    project_dir = str(project_root / project_name)
+
+    # Временно добавляем директорию проекта в sys.path,
+    # чтобы bare-импорты внутри main.py (from rss_reader import ...)
+    # работали так же, как при прямом запуске python main.py
+    sys.path.insert(0, project_dir)
+    try:
+        spec = importlib.util.spec_from_file_location(
+            f"{project_name}_main", main_path
+        )
+        project_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(project_module)
+
+        if asyncio.iscoroutinefunction(project_module.run):
+            await project_module.run()
+        else:
+            # Если функция синхронная, запускаем в отдельном потоке
+            await asyncio.to_thread(project_module.run)
+    finally:
+        if project_dir in sys.path:
+            sys.path.remove(project_dir)
 
 
 @admin_only
@@ -163,6 +202,82 @@ async def cmd_digest(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         await status_msg.edit_text(f"❌ Ошибка: {e}")
 
 
+@admin_only
+async def cmd_newset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Создать новый кастомный набор аккаунтов."""
+    if len(context.args) < 2:
+        await update.message.reply_text(
+            "❌ Использование: /newset &lt;название&gt; @handle1 handle2 ...\n"
+            "Пример: <code>/newset crypto_gurus elonmusk naval balajis</code>",
+            parse_mode="HTML"
+        )
+        return
+
+    set_name = context.args[0].lower()
+    handles = context.args[1:]
+
+    try:
+        data = create_custom_set(set_name, handles)
+        handles_list = "\n".join(f"  • @{acc['handle']}" for acc in data["accounts"])
+        await update.message.reply_text(
+            f"✅ Сет <b>{data['name']}</b> создан!\n\n"
+            f"Аккаунты ({len(data['accounts'])}):\n{handles_list}\n\n"
+            f"Запустить: <code>/digest {set_name}</code>",
+            parse_mode="HTML"
+        )
+    except ValueError as e:
+        await update.message.reply_text(f"❌ {e}")
+
+
+@admin_only
+async def cmd_addto(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Добавить аккаунты в существующий кастомный сет."""
+    if len(context.args) < 2:
+        await update.message.reply_text(
+            "❌ Использование: /addto &lt;название&gt; @handle1 handle2 ...\n"
+            "Пример: <code>/addto crypto_gurus pmarca</code>",
+            parse_mode="HTML"
+        )
+        return
+
+    set_name = context.args[0].lower()
+    handles = context.args[1:]
+
+    try:
+        data, added = add_to_custom_set(set_name, handles)
+        added_list = "\n".join(f"  • @{acc['handle']}" for acc in added)
+        await update.message.reply_text(
+            f"✅ Добавлено в <b>{data['name']}</b> ({len(added)}):\n{added_list}\n\n"
+            f"Всего аккаунтов в сете: {len(data['accounts'])}",
+            parse_mode="HTML"
+        )
+    except ValueError as e:
+        await update.message.reply_text(f"❌ {e}")
+
+
+@admin_only
+async def cmd_delset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Удалить кастомный набор аккаунтов."""
+    if not context.args:
+        await update.message.reply_text(
+            "❌ Использование: /delset &lt;название&gt;\n"
+            "Пример: <code>/delset crypto_gurus</code>",
+            parse_mode="HTML"
+        )
+        return
+
+    set_name = context.args[0].lower()
+
+    try:
+        delete_custom_set(set_name)
+        await update.message.reply_text(
+            f"✅ Сет <b>{set_name}</b> удалён",
+            parse_mode="HTML"
+        )
+    except ValueError as e:
+        await update.message.reply_text(f"❌ {e}")
+
+
 async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Приветствие при /start."""
     user_id = update.effective_user.id
@@ -197,6 +312,9 @@ def main() -> None:
     app.add_handler(CommandHandler("help", cmd_help))
     app.add_handler(CommandHandler("projects", cmd_projects))
     app.add_handler(CommandHandler("digest", cmd_digest))
+    app.add_handler(CommandHandler("newset", cmd_newset))
+    app.add_handler(CommandHandler("addto", cmd_addto))
+    app.add_handler(CommandHandler("delset", cmd_delset))
 
     # Запускаем polling
     print("✅ Бот запущен. Ожидание команд...")

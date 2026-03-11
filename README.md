@@ -79,8 +79,13 @@ python visionary.py run --techcrunch_venture
 /digest techcrunch_startup    — запустить TechCrunch Startups
 /digest techcrunch_venture    — запустить TechCrunch Venture
 
+# Кастомные наборы аккаунтов
+/newset <name> handle1 handle2 ...  — создать кастомный набор
+/addto <name> handle1 handle2 ...   — добавить аккаунты в кастомный набор
+/delset <name>                      — удалить кастомный набор
+
 # Информация
-/projects                 — список всех проектов
+/projects                 — список всех проектов (встроенные + кастомные)
 /help                     — справка
 ```
 
@@ -135,7 +140,9 @@ ADMIN_USER_ID=your_telegram_user_id
 }
 ```
 
-Добавляйте свои файлы — имя файла становится CLI-флагом.
+Добавляйте свои файлы вручную — имя файла становится CLI-флагом. Либо используйте команды бота `/newset` / `/addto` / `/delset` для управления кастомными наборами без редактирования файлов.
+
+Кастомные наборы отмечаются флагом `"custom": true` в JSON и отображаются отдельно в `/projects`. Они автоматически участвуют в `/digest all`.
 
 ## LLM и промпты
 

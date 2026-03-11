@@ -1,5 +1,6 @@
 import json
 import traceback
+from pathlib import Path
 
 from tc_reader import fetch_latest_articles
 from article_parser import extract_article_text
@@ -7,7 +8,7 @@ from article_ranker import rank_articles
 from summarizer import generate_summary
 from telegram_sender import send_message, send_comment
 
-PROCESSED_FILE = "processed_news.json"
+PROCESSED_FILE = Path(__file__).resolve().parent / "processed_news.json"
 
 
 def load_processed():

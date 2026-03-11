@@ -11,6 +11,6 @@ LLM_API_KEY = os.getenv("LLM_API_KEY", "")
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN", "")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
 
-TECHCRUNCH_URL = "https://techcrunch.com/category/startups/"
+TECHCRUNCH_URL = "https://techcrunch.com/category/venture/"
 
 MAX_ITEMS = 3

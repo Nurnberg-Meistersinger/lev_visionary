@@ -20,5 +20,4 @@ def fetch_latest_articles(limit=5):
             "link": link
         })
 
-    print("DEBUG: found articles:", len(articles))
     return articles

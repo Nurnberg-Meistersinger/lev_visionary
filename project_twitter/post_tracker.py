@@ -1,13 +1,13 @@
 import json
-import os
+from pathlib import Path
 from typing import List
 
-FILE_PATH = "processed_posts.json"
+FILE_PATH = Path(__file__).resolve().parent / "processed_posts.json"
 
 
 def load_processed() -> List[str]:
     """Загружает список обработанных твитов."""
-    if not os.path.exists(FILE_PATH):
+    if not FILE_PATH.exists():
         return []
     try:
         with open(FILE_PATH, "r", encoding="utf-8") as f:
