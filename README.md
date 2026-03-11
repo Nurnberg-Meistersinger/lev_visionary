@@ -14,11 +14,13 @@ The Visionary — это AI-платформа для автоматическо
 ## Быстрый старт
 
 1. Python 3.12+ и виртуальное окружение:
+
    ```bash
    python -m venv .the_vis && source ./.the_vis/bin/activate
    ```
 
 2. Установка зависимостей:
+
    ```bash
    pip install -r requirements.txt
    ```
@@ -26,6 +28,7 @@ The Visionary — это AI-платформа для автоматическо
 3. Заполните `.env` (см. раздел Конфигурация)
 
 4. Запуск:
+
    ```bash
    python visionary.py run --all
    ```
@@ -61,7 +64,8 @@ python visionary.py run --techcrunch_venture
 Бот позволяет запускать все проекты удалённо через Telegram (требуется VPS).
 
 **Команды:**
-```
+
+```bash
 # Twitter дайджесты
 /digest palantir          — дайджест Palantir (топ-10)
 /digest blockchain        — дайджест Blockchain
@@ -90,6 +94,7 @@ python visionary.py run --techcrunch_venture
 ```
 
 **Запуск бота на VPS:**
+
 ```bash
 cd the_visionary
 source .venv/bin/activate
@@ -180,6 +185,7 @@ SCHEDULE_TIMEZONE=Europe/Moscow
 ### Критерии отбора твитов
 
 LLM оценивает твиты по шкале 0-10:
+
 - Конкретные новости: анонсы, сделки, партнёрства
 - Инсайдерская информация от руководителей
 - Аналитика с цифрами и метриками
