@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import List, Dict
 from twikit import Client
-from twikit.errors import UserUnavailable
+from twikit.errors import UserUnavailable, UserNotFound
 
 from .config import TWITTER_USERNAME, TWITTER_EMAIL, TWITTER_PASSWORD
 
@@ -69,8 +69,8 @@ async def fetch_last_posts_async(username: str, count: int = 5) -> List[Dict]:
 
     try:
         user = await client.get_user_by_screen_name(username)
-    except UserUnavailable as e:
-        print(f"⚠️  Аккаунт @{username} недоступен (заблокирован/удален): {e}")
+    except (UserNotFound, UserUnavailable) as e:
+        print(f"⚠️  Аккаунт @{username} недоступен или не существует: {e}")
         return []
 
     result = await user.get_tweets(tweet_type="Tweets")

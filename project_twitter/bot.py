@@ -133,9 +133,11 @@ async def run_other_project(project_name: str) -> None:
     main_path = project_root / project_name / "main.py"
     project_dir = str(project_root / project_name)
 
-    # Временно добавляем директорию проекта в sys.path,
-    # чтобы bare-импорты внутри main.py (from rss_reader import ...)
-    # работали так же, как при прямом запуске python main.py
+    # Bare-импорты (config, telegram_sender, rss_reader и т.д.) кешируются
+    # в sys.modules и переиспользуются следующим проектом.
+    # Сохраняем состояние до запуска и сбрасываем добавленные модули после.
+    modules_before = set(sys.modules.keys())
+
     sys.path.insert(0, project_dir)
     try:
         spec = importlib.util.spec_from_file_location(
@@ -147,11 +149,13 @@ async def run_other_project(project_name: str) -> None:
         if asyncio.iscoroutinefunction(project_module.run):
             await project_module.run()
         else:
-            # Если функция синхронная, запускаем в отдельном потоке
             await asyncio.to_thread(project_module.run)
     finally:
         if project_dir in sys.path:
             sys.path.remove(project_dir)
+        # Удаляем все модули, которые были загружены этим проектом
+        for mod in set(sys.modules.keys()) - modules_before:
+            del sys.modules[mod]
 
 
 @admin_only
@@ -318,7 +322,7 @@ async def run_scheduled_digest(context: ContextTypes.DEFAULT_TYPE) -> None:
         except Exception as e:
             logger.error(f"Scheduled [twitter/{set_name}] error: {e}", exc_info=True)
             results.append(("❌", f"twitter/{set_name}: {e}"))
-        await asyncio.sleep(90)
+        await asyncio.sleep(180)
 
     # — Отчёт админу —
     elapsed = int((datetime.now() - start_time).total_seconds() / 60)
