@@ -1,6 +1,6 @@
 # Secrets
 .env
-.env.backup
+.env.*
 
 # Python
 __pycache__/
@@ -12,6 +12,8 @@ venv/
 .venv/
 .the_vis/
 *.egg-info/
+dist/
+build/
 
 # IDE
 .vscode/
@@ -20,7 +22,9 @@ venv/
 *.swp
 *.swo
 
-# Runtime files
+# Runtime / data files
+processed_news.json
+*.json.backup
 project_twitter/cookies.json
 project_twitter/processed_posts.json
 
