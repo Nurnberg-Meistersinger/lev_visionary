@@ -1,9 +1,6 @@
 import requests
 import html
-from .config import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
-
-# ID Discussion Group, привязанной к каналу
-DISCUSSION_GROUP_ID = "-1003818477216"
+from .config import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID, DISCUSSION_GROUP_ID
 
 
 def escape_for_telegram(text: str) -> str:
